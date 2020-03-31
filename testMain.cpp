@@ -9,12 +9,22 @@ unsigned char Test_data[] = {0x68,0x52,0x00,0x52,0x00,0x68,0xA8,0x60,0x51,
 unsigned char Test2_data[] = {0x68,0x32,0x00,0x32,0x00,0x68,0xc9,0x60,0x51,
 							0xdf,0x5c,0x00,0x02,0x70,0x00,0x00,0x01,0x00,0x28,0x16};
 
+
 int main()
 {
 	int ret = 1;
 	VT1376_1_Format Test ;
-	Test.formatResolve(Test_data);
-	Test.postFormat(PRMisOne_conncetTest,(unsigned char*)"51605cdf00", AFN_Affirm,1);
+	/*Test.formatResolve(Test_data);
+	Test.postFormat(PRMisOne_conncetTest,(unsigned char*)"51605cdf00", AFN_Affirm,1);*/
+	
+	unsigned char* p = Test.postFormat(PRMisOne_conncetTest, "51605cdf00",
+										AFN_ConnectCheck, "F1","P0",
+									   DIR_UP, PRM_Terminal, FI_One, NeendACK);
+	unsigned char Test3_data[100] = { 0 };
+	Test.strcopy(Test3_data,Test.getLeght());
+	
+	Test.formatResolve(Test3_data);
+	
 	std::cout <<"hello this is test" << std::endl;
 	return ret;
 }

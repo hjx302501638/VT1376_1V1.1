@@ -33,6 +33,44 @@ VT1376_1_Format::~VT1376_1_Format()
 {
 
 }
+/***************************************************
+ *函数名：   VT1376_1_Format
+ *函数功能： VT1376_1_Layout 返回合成数据长度
+ *输入参数： 无
+ *说明：     无
+****************************************************/
+unsigned int VT1376_1_Format::getLeght()
+{
+    return lenght;
+}
+
+/***************************************************
+ *函数名：   VT1376_1_Format
+ *函数功能： VT1376_1_Layout 拷贝databuffer中数据到外部中去
+ *输入参数： 无
+ *说明：     无
+****************************************************/
+void VT1376_1_Format::strcopy(unsigned char* sre, unsigned int len)
+{
+    if (len < bufferMax)
+    {
+        for (unsigned int i = 0; i < len; i++)
+        {
+            sre[i] = dataBuffer[i];//Test.getDataBuffer(i);
+        }
+    }
+    
+}
+/***************************************************
+ *函数名：   VT1376_1_Format
+ *函数功能： VT1376_1_Layout 返回dataBuffer地址
+ *输入参数： 无
+ *说明：     无
+****************************************************/
+unsigned char VT1376_1_Format::getDataBuffer(unsigned int i)
+{
+    return dataBuffer[i];
+}
 
 
 /***************************************************
@@ -360,6 +398,13 @@ unsigned int   VT1376_1_Format::getFormatData(unsigned char* data, unsigned char
     }
     return  ret;
 }
+
+/***************************************************
+ *函数名：   VT1376_1_Format
+ *函数功能： VT1376_1_Layout 小端模式转换
+ *输入参数： 无
+ *说明：     无
+****************************************************/
 unsigned int VT1376_1_Format::smallEndChange(unsigned int dataIn)
 {
     unsigned int temp = 0;
@@ -367,7 +412,14 @@ unsigned int VT1376_1_Format::smallEndChange(unsigned int dataIn)
     temp    |= (dataIn&0xff) << 8;
     return temp;
 }
-bool VT1376_1_Format::strToHex(unsigned char* dataIn)
+
+/***************************************************
+ *函数名：   VT1376_1_Format
+ *函数功能： VT1376_1_Layout 字符串转16 进制
+ *输入参数： 无
+ *说明：     无
+****************************************************/
+bool VT1376_1_Format::strToHex(const char* dataIn)
 {
     unsigned  int ret = 0;
     int i=0;
@@ -447,6 +499,29 @@ bool VT1376_1_Format::strToHex(unsigned char* dataIn)
 }
 /***************************************************
  *函数名：   VT1376_1_Format
+ *函数功能： VT1376_1_Layout 字符串 转十进制
+ *输入参数： 无
+ *说明：     无
+****************************************************/
+unsigned int VT1376_1_Format::strToNumber(const  char* dataIn)
+{
+    unsigned int ret = 0;
+    while (*dataIn++)
+    {
+        if ((*dataIn > 47) && (*dataIn < 58))
+        {
+            ret *= 10;
+            ret += (*dataIn - (48));
+        }
+
+    }
+    return ret;
+}
+
+
+
+/***************************************************
+ *函数名：   VT1376_1_Format
  *函数功能： VT1376_1_Layout 计算CS
  *输入参数： 无
  *说明：     无
@@ -454,7 +529,7 @@ bool VT1376_1_Format::strToHex(unsigned char* dataIn)
 unsigned char VT1376_1_Format::getCS(unsigned char* dataIn,unsigned int dataLenght)
 {
     unsigned char ret = 0;
-    for (int i = 0; i < dataLenght; i++)
+    for (unsigned int i = 0; i < dataLenght; i++)
     {
         ret += dataIn[i];
     }
@@ -517,6 +592,7 @@ bool VT1376_1_Format::formatResolve(unsigned char* data)
     bool ret = false;    
     if (checkLenght(data) && checkCS(dataBuffer))
     {
+        ret = true;
         contorllerRegion = dataBuffer[0];
         addressRegionA1 = dataBuffer[2] << 8 | dataBuffer[1];
         addressRegionA2 = dataBuffer[4] << 8 | dataBuffer[3];
@@ -555,13 +631,14 @@ bool VT1376_1_Format::formatResolve(unsigned char* data)
  *输入参数： data  输入16 进制数据
  *说明：     无
 ****************************************************/
-unsigned char* VT1376_1_Format::postFormat(unsigned char funcCode, unsigned char* addres, 
-                                           unsigned char appFuncCode, unsigned char Fn, 
-                                          unsigned char Pn, unsigned char FI, unsigned char needAck)
+unsigned char* VT1376_1_Format::postFormat(unsigned char funcCode, const char* addres, 
+                                           unsigned char appFuncCode, const char* Fn,
+                                             const char* Pn,unsigned char Dir,unsigned char PRM,
+                                            unsigned char FI, unsigned char needAck,unsigned char data)
 {
     dataBufferClear();//清除缓存
     /*功能码*/
-    contorllerRegion = funcCode;
+    contorllerRegion = funcCode|(Dir<<7)|(PRM << 6);
     /*地址域*/
     if (strToHex(addres))
     {
@@ -576,33 +653,35 @@ unsigned char* VT1376_1_Format::postFormat(unsigned char funcCode, unsigned char
     setSEQData((FI <<5) | (needAck <<4) );
 
     /*计算Pn*/
-    if (Pn == 0)
+    if (Pn == "P0" ||(Pn == "p0"))
     {
-        setDataIdenPn(Pn);
+        
+        setDataIdenPn(0);
     }
     else
     {
-     
-        unsigned char  DA1 = 1 << ((Pn-1)%8);
-        unsigned char  DA2 = (Pn - 1) / 8+1;
+        unsigned int temp = strToNumber(Pn);
+        unsigned char  DA1 = 1 << ((temp -1)%8);
+        unsigned char  DA2 = (temp - 1) / 8+1;
         setDataIdenPn((DA1 << 8) | DA2);
     }
     /*计算Fn*/
-    if (Fn == 0)
+    if (Fn == "F0")
     {
 
     }
     else
     {
-        unsigned char DT1 = 1 << ((Fn - 1) % 8);
-        unsigned char DT2 = (Fn - 1) / 8;
+        unsigned int temp = strToNumber(Fn);
+        unsigned char DT1 = 1 << ((temp - 1) % 8);
+        unsigned char DT2 = (temp - 1) / 8;
         setDataIdenFn((DT1 << 8) | DT2);
     }
     /*计算CS*/
     //checkCode = getCS();
     /*生成报文*/
     dataBufferClear();
-    if ((appFuncCode != 0x04) && (appFuncCode != 0x05))//04 为设置命令   05 为控制命令    其余为数据请求命令
+   // if ((appFuncCode != 0x04) && (appFuncCode != 0x05))//04 为设置命令   05 为控制命令    其余为数据请求命令
     {
         unsigned int temp = 0;
         /*起始头*/
@@ -612,6 +691,7 @@ unsigned char* VT1376_1_Format::postFormat(unsigned char funcCode, unsigned char
         dataBuffer[temp++] = 0x32;
         dataBuffer[temp++] = 0x00;
         dataBuffer[temp++] = startChar;
+        
         /*功能码*/
         dataBuffer[temp++] = contorllerRegion;
         /*地址域*/
@@ -648,7 +728,7 @@ unsigned char* VT1376_1_Format::postFormat(unsigned char funcCode, unsigned char
     printf("SEQ:0x%x\n", getSEQData());
     printf("setDataIdenPn:0x%x\n", getDataIdenPn());
     printf("setDataIdenFn:0x%x\n", getDataIdenFn());
-    for (int i = 0; i < lenght; i++)
+    for (unsigned int  i = 0; i < lenght; i++)
     {
         printf("%.2x\t", dataBuffer[i]);
     }

@@ -3,6 +3,12 @@
 #include "VT1376_1_Frame.h"
 
 
+/*
+ 程序说明：  用来处理请求数据一类
+
+
+*/
+
 #define user_String  1
 
 #define BufferMax    100
@@ -14,7 +20,7 @@ using namespace std;
 typedef enum Fn
 {
 	F2 = 2,
-
+	
 }Fn;
 
 class VT_1376_1_GetDataOne :	public userFormat

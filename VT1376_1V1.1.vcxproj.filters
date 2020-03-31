@@ -24,12 +24,18 @@
     <ClCompile Include="VT_1376_1_GetDataOne.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="VT_1379_1_AFN_Affirm.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VT1376_1_Frame.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="VT_1376_1_GetDataOne.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="VT_1379_1_AFN_Affirm.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

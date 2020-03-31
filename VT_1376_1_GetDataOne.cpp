@@ -9,6 +9,8 @@ VT_1376_1_GetDataOne::VT_1376_1_GetDataOne()
 	Pn = 0;
 	offset = 0;
 	lenght = NULL;
+	for (int i = 0; i < BufferMax; i++)
+		dataBuffer[i] = 0;
 }
 
 VT_1376_1_GetDataOne::VT_1376_1_GetDataOne(unsigned char* dataIn, unsigned int   lenghtIn)
@@ -18,6 +20,8 @@ VT_1376_1_GetDataOne::VT_1376_1_GetDataOne(unsigned char* dataIn, unsigned int  
 	offset = 0;
 	copyDatatoBuffer(dataIn,lenghtIn);
 	lenght = lenghtIn;
+	for (int i = 0; i < BufferMax; i++)
+		dataBuffer[i] = 0;
 }
 VT_1376_1_GetDataOne::~VT_1376_1_GetDataOne()
 {

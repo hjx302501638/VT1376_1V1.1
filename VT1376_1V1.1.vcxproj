@@ -141,10 +141,12 @@
     <ClCompile Include="VT1376_1_Frame.cpp" />
     <ClCompile Include="testMain.cpp" />
     <ClCompile Include="VT_1376_1_GetDataOne.cpp" />
+    <ClCompile Include="VT_1379_1_AFN_Affirm.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VT1376_1_Frame.h" />
     <ClInclude Include="VT_1376_1_GetDataOne.h" />
+    <ClInclude Include="VT_1379_1_AFN_Affirm.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

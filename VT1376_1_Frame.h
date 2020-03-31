@@ -59,8 +59,8 @@ typedef enum  AFNFuncCode
 
 typedef enum  ACK
 {
-    noACK,
-    ACK
+    noACK               = 0x00,
+    NeendACK            = 0x01
 }ACK;
 typedef enum  FI
 {
@@ -70,6 +70,24 @@ typedef enum  FI
     FI_One    = 0x03
 }FI;
 
+
+typedef enum outStata
+{
+    OFF = 0x00,
+    ON   = 0x01
+}outStata;
+
+typedef enum DIR
+{
+    DIR_down = 0x00,
+    DIR_UP   = 0x01
+}DIR;
+
+typedef enum PRM
+{
+    PRM_Sever  = 0x00,
+    PRM_Terminal=0x01
+}PRM;
 /*类定义*/
 class  userFormat 
 {
@@ -138,17 +156,24 @@ private:
     unsigned int getDataLenght(unsigned char* data);//获取总长度
     unsigned int  getFormatData(unsigned char* data, unsigned char head, unsigned char tail, unsigned char datalenght);//获取两个数据中间的数据 并存入dataBufer中
     unsigned int  smallEndChange(unsigned int dataIn);
-    bool strToHex(unsigned char* dataIn);
+    bool strToHex(const char* dataIn);
+    unsigned int strToNumber(const  char* dataIn);
     unsigned char getCS(unsigned char* dataIn, unsigned int dataLenght);
 protected:
 
 public:
     VT1376_1_Format();
     ~VT1376_1_Format();
+    unsigned int getLeght();//返回合成数据长度
+    void strcopy(unsigned char* sre, unsigned int len = bufferMax);
+    
+    unsigned char getDataBuffer(unsigned int i = 0);
     bool getAddress(unsigned char* Region);
     bool formatResolve(unsigned char* data);
-    unsigned char* postFormat(unsigned char funcCode,unsigned char* addres,unsigned char appFuncCode,unsigned char Fn,unsigned char Pn = 0,
-                              unsigned char FI = FI_One,unsigned char needAck = NULL);
+    unsigned char* postFormat(unsigned char funcCode,const char* addres,unsigned char appFuncCode,
+                                 const char* Fn, const char* Pn = NULL,  
+                                unsigned char Dir = 0, unsigned char PRM = 0,unsigned char FI = FI_One,
+                                unsigned char needAck = NULL, unsigned char data = 0);
 };
 
 
